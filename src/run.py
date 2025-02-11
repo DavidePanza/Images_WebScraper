@@ -57,4 +57,4 @@ if __name__ == '__main__':
 
     # Download images   
     data_dir = "../data/"
-    download_images(image_urls, data_dir, search_query, number_of_images=20, check_size=(120,120))
+    download_images(image_urls, data_dir, search_query, number_of_images=number_of_pages, check_size=(120,120))
