@@ -1,4 +1,5 @@
 import requests
+import argparse
 from bs4 import BeautifulSoup
 import os
 import io
@@ -6,10 +7,32 @@ import time
 import base64
 from PIL import Image
 
-def get_images_urls(driver, query, number_of_pages):
+def readable_dir(prospective_dir):
+    """Check if the provided path is a valid and readable directory."""
+    if not os.path.isdir(prospective_dir):
+        raise argparse.ArgumentTypeError(f"'{prospective_dir}' is not a valid directory.")
+    if not os.access(prospective_dir, os.R_OK):
+        raise argparse.ArgumentTypeError(f"'{prospective_dir}' is not a readable directory.")
+    return prospective_dir
+
+def get_images_urls(driver, query, max_number_of_pages=2, page_range=None):
+    """
+    Fetches image URLs from Google Images based on a search query.
+
+    Parameters:
+    - driver: Selenium WebDriver instance used to navigate web pages.
+    - query (str): The search term for which images are to be fetched.
+    - max_number_of_pages (int, optional): The maximum number of Google Images result pages to parse. Defaults to 2.
+    - page_range (tuple, optional): A tuple specifying the range of pages to parse (start_page, end_page). If None, defaults to (0, max_number_of_pages).
+
+    Returns:
+    - list: A list containing the URLs of the images found.
+    """
     query_encoded = query.replace(" ", "+")
     urls = []
-    for i in range(number_of_pages):
+    if page_range is None:
+        page_range = (0, max_number_of_pages)
+    for i in range(page_range[0], page_range[1]):
         url = f"https://www.google.com/search?q={query_encoded}&tbm=isch&ijn={i}"
         driver.get(url)
         time.sleep(3)  # Wait for the page to load completely
