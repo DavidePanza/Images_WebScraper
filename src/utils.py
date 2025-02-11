@@ -1,19 +1,10 @@
 import requests
-import argparse
 from bs4 import BeautifulSoup
 import os
 import io
 import time
 import base64
 from PIL import Image
-
-def readable_dir(prospective_dir):
-    """Check if the provided path is a valid and readable directory."""
-    if not os.path.isdir(prospective_dir):
-        raise argparse.ArgumentTypeError(f"'{prospective_dir}' is not a valid directory.")
-    if not os.access(prospective_dir, os.R_OK):
-        raise argparse.ArgumentTypeError(f"'{prospective_dir}' is not a readable directory.")
-    return prospective_dir
 
 def get_images_urls(driver, query, max_number_of_pages=2, page_range=None):
     """

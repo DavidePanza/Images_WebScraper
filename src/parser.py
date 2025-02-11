@@ -41,6 +41,13 @@ def parse_arguments():
         help="Range of pages to parse, specified as two integers: start and end (e.g., --page_range 0 2)"
     )
     parser.add_argument(
+        "--min_image_size",
+        type=int,
+        nargs=2,
+        metavar=('WIDTH', 'HEIGHT'),
+        help="Minimum image dimensions to download, specified as two integers: WIDTH and HEIGHT (e.g., --min_image_size 800 600)"
+    )
+    parser.add_argument(
         "--output_dir",
         type=readable_dir,
         default=parent_dir,

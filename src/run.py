@@ -2,46 +2,35 @@ import argparse
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from utils import get_images_urls, download_images
+from parser import parse_arguments
 import os
 
-def readable_dir(prospective_dir):
-    """Check if the provided path is a valid and readable directory."""
-    if not os.path.isdir(prospective_dir):
-        raise argparse.ArgumentTypeError(f"'{prospective_dir}' is not a valid directory.")
-    if not os.access(prospective_dir, os.R_OK):
-        raise argparse.ArgumentTypeError(f"'{prospective_dir}' is not a readable directory.")
-    return prospective_dir
-
 if __name__ == '__main__':
+    """
+    Main function to execute the Google Image Search Downloader.
+
+    This function parses command-line arguments to determine the search query,
+    number of images to download, page range, output directory, and minimum image size.
+    It then sets up a headless Chrome browser using Selenium, retrieves image URLs
+    based on the search query, and downloads the specified number of images
+    to the designated output directory.
+
+    Example command-line usage:
+        python your_script.py "puppies" -n 10 --max_number_of_pages 5 --page_range 1 3 --min_image_size 800 600 --output_dir /path/to/output 
+    """
+
     # Determine the parent directory of the script's directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
     parent_dir = os.path.dirname(script_dir)
 
-    # Parse command-line arguments.
-    parser = argparse.ArgumentParser(
-        description="Google Image Search Downloader"
-    )
-    parser.add_argument(
-        "query",
-        type=str,
-        help="Search query for images"
-    )
-    parser.add_argument(
-        "-n", "--num_images",
-        type=int,
-        default=5,
-        help="Total number of images to download (default: 5)"
-    )
-    parser.add_argument(
-        "--output_dir",
-        type=readable_dir,
-        default=parent_dir,
-        help=f"Directory to save images (default: parent directory of the script: '{parent_dir}')"
-    )
-    args = parser.parse_args()
-    
+    # Parse the arguments
+    args = parse_arguments()
     search_query = args.query
     num_images = args.num_images
+    page_range = tuple(args.page_range) if args.page_range else None
+    max_number_of_pages = args.max_number_of_pages
+    min_image_size = tuple(args.min_image_size) if args.min_image_size else (120, 120)
+    output_dir = args.output_dir
     
     print(f"Searching for images of: {search_query}")
     # Set up Selenium 
@@ -51,10 +40,8 @@ if __name__ == '__main__':
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(options=chrome_options)
 
-    # Get image URLs
-    number_of_pages = 2    
-    image_urls = get_images_urls(driver, search_query, number_of_pages)
+    # Get image URLs 
+    image_urls = get_images_urls(driver, search_query, max_number_of_pages)
 
     # Download images   
-    data_dir = "../data/"
-    download_images(image_urls, data_dir, search_query, number_of_images=number_of_pages, check_size=(120,120))
+    download_images(image_urls, output_dir, search_query, number_of_images=num_images, check_size=min_image_size)
