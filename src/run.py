@@ -10,13 +10,15 @@ if __name__ == '__main__':
     Main function to execute the Google Image Search Downloader.
 
     This function parses command-line arguments to determine the search query,
-    number of images to download, page range, output directory, and minimum image size.
+    number of images to download, max number of page to scrape,
+    custom page range to scrape (to get different images otherwise the scraping will always start from page 0),
+    output directory (where to store the images), and minimum image size.
     It then sets up a headless Chrome browser using Selenium, retrieves image URLs
     based on the search query, and downloads the specified number of images
     to the designated output directory.
 
     Example command-line usage:
-        python your_script.py "puppies" -n 10 --max_number_of_pages 5 --page_range 1 3 --min_image_size 800 600 --output_dir /path/to/output 
+        python your_script.py "image class" -n 10 --max_number_of_pages 5 --page_range 1 3 --min_image_size 800 600 --output_dir /path/to/output 
     """
 
     # Determine the parent directory of the script's directory
