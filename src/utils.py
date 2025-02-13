@@ -36,19 +36,26 @@ def get_images_urls(driver, query, max_number_of_pages=2, page_range=None):
             src = img.get("src")
             if src:
                 urls.append(src)
-    driver.quit()
-    
+    driver.quit()  
     return urls
 
-def download_images(image_urls, data_dir, query, number_of_images=None, check_size=(120, 120)):
+def make_image_directory(main_directory, query):
+    """
+    Creates a directory called downloaded_images if it does not exist.
+    """
+    data_directory = os.path.join(main_directory, "downloaded_images")
+    os.makedirs(data_directory, exist_ok=True)
+    class_directory = os.path.join(data_directory, query)
+    os.makedirs(class_directory, exist_ok=True)
+    return class_directory
+
+def download_images(image_urls, class_directory, number_of_images=None, check_size=(120, 120)):
     """
     Downloads images from a list of URLs (data URLs or HTTP URLs) and saves them
     in a subdirectory named after the query under data_dir. Optionally, only images
     that are at least check_size (width, height) are saved.
     """
     # Create output directory using os.path.join
-    output_dir = os.path.join(data_dir, query)
-    os.makedirs(output_dir, exist_ok=True)
     counter = 0
 
     # If number_of_images is None, process all images
@@ -104,7 +111,7 @@ def download_images(image_urls, data_dir, query, number_of_images=None, check_si
                     continue
 
             # Save the image data to a file
-            file_path = os.path.join(output_dir, f"image_{idx}{ext}")
+            file_path = os.path.join(class_directory, f"image_{idx}{ext}")
             with open(file_path, "wb") as f:
                 f.write(image_data)
             counter += 1
