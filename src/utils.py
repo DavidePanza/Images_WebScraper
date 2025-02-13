@@ -42,12 +42,35 @@ def get_images_urls(driver, query, max_number_of_pages=2, page_range=None):
 def make_image_directory(main_directory, query):
     """
     Creates a directory called downloaded_images if it does not exist.
+    Creates a subdirectory named after the query under downloaded_images.
     """
     data_directory = os.path.join(main_directory, "downloaded_images")
     os.makedirs(data_directory, exist_ok=True)
     class_directory = os.path.join(data_directory, query)
     os.makedirs(class_directory, exist_ok=True)
     return class_directory
+
+def check_image_size(image_data, min_size=(120, 120)):
+    """
+    Checks if an image meets the minimum size requirements.
+    """
+    try:
+        image = Image.open(io.BytesIO(image_data))
+        width, height = image.size
+        min_width, min_height = min_size
+        return width >= min_width and height >= min_height
+    except:
+        print(f"Image size is too small")
+        return False 
+    
+def store_image(image_data, class_directory, idx, ext):
+    """
+    Stores image data in a the filepath.
+    """
+    file_path = os.path.join(class_directory, f"image_{idx}{ext}")
+    with open(file_path, "wb") as f:
+        f.write(image_data)
+    return file_path
 
 def download_images(image_urls, class_directory, number_of_images=None, check_size=(120, 120)):
     """
@@ -70,17 +93,16 @@ def download_images(image_urls, class_directory, number_of_images=None, check_si
             ext = ".jpg"  # default extension for JPEG images
 
             if img_url.startswith("data:image/jpeg"):
-                # --- Handle Data URLs for JPEG ---
-                # Data URLs are in the format: data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+                # Handle urls for jpeg images
                 header, base64_data = img_url.split(",", 1)
                 if "image/jpeg" in header:
                     ext = ".jpg"
                 else:
-                    raise ValueError(f"Unknown image type in header: {header}")
+                    raise ValueError(f"Unknown image type in header")
                 image_data = base64.b64decode(base64_data)
 
             elif img_url.startswith("http") and img_url.lower().endswith((".jpg", ".jpeg")):
-                # --- Handle HTTP URLs for JPEG images ---
+                # Handle URLs for JPEG images
                 response = requests.get(img_url, stream=True)
                 if response.status_code == 200:
                     image_data = response.content
@@ -88,34 +110,25 @@ def download_images(image_urls, class_directory, number_of_images=None, check_si
                     if "jpeg" in content_type.lower():
                         ext = ".jpg"
                     else:
-                        raise ValueError(f"Unknown content type: {content_type}")
+                        raise ValueError(f"Unknown content type")
                 else:
-                    print(f"Failed to download {img_url} - status code {response.status_code}")
+                    print(f"Failed to download")
                     continue
 
             else:
-                print(f"Unknown URL format: {img_url}")
+                print(f"Unknown URL format")
                 continue
-
+    
             # If size checking is enabled, verify that the image meets the minimum dimensions
-            if check_size is not None and image_data:
-                try:
-                    image = Image.open(io.BytesIO(image_data))
-                    width, height = image.size
-                    min_width, min_height = check_size
-                    if width < min_width or height < min_height:
-                        print(f"Image too small ({width}x{height}): {img_url}")
-                        continue
-                except Exception as size_error:
-                    print(f"Failed to check size for {img_url}: {size_error}")
+            if check_size and image_data:
+                if not check_image_size(image_data, check_size):
+                    print(f"Image too small, skipping image")
                     continue
 
             # Save the image data to a file
-            file_path = os.path.join(class_directory, f"image_{idx}{ext}")
-            with open(file_path, "wb") as f:
-                f.write(image_data)
+            file_path = store_image(image_data, class_directory, counter, ext)
             counter += 1
             print(f"Saved: {file_path}")
 
         except Exception as e:
-            print(f"Error processing {img_url}: {e}")
+            print(f"Error processing image")

@@ -10,8 +10,20 @@ def readable_dir(prospective_dir):
     return prospective_dir
 
 def parse_arguments():
-    """Parse command-line arguments."""
-    # Determine the parent directory of the script's directory
+    """
+    Parses command-line arguments for the Google Image Search Downloader.
+
+    Returns:
+        argparse.Namespace: An object containing all parsed arguments.
+
+    Arguments:
+        query (str): The search query for retrieving images.
+        -n, --num_images (int): Number of images to download (default: 5).
+        --max_number_of_pages (int): Maximum pages to scrape (default: 2).
+        --page_range (int, int): Start and end page numbers to scrape (optional).
+        --min_image_size (int, int): Minimum width and height for images (optional).
+        --output_dir (str): Directory to save downloaded images (default: parent directory of the script).
+    """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     parent_dir = os.path.dirname(script_dir)
 
