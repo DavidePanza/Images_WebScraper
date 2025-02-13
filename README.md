@@ -1,7 +1,9 @@
-# 🖼️ Google Image Search Downloader
+# 🖼️ Images Web-Scraper
 
 A Python-based command-line tool that downloads images from **Google Image Search** based on a given query.  
 It utilizes **Selenium** to automate the search, extract image URLs, and save images to a specified directory.
+
+---
 
 ## 📌 Arguments
 The following command-line arguments can be passed to the script:
