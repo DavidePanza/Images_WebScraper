@@ -6,6 +6,7 @@ import time
 import base64
 from PIL import Image
 
+
 def get_images_urls(driver, query, max_number_of_pages=2, page_range=None):
     """
     Fetches image URLs from Google Images based on a search query.
@@ -39,6 +40,7 @@ def get_images_urls(driver, query, max_number_of_pages=2, page_range=None):
     driver.quit()  
     return urls
 
+
 def make_image_directory(main_directory, query):
     """
     Creates a directory called downloaded_images if it does not exist.
@@ -49,6 +51,7 @@ def make_image_directory(main_directory, query):
     class_directory = os.path.join(data_directory, query)
     os.makedirs(class_directory, exist_ok=True)
     return class_directory
+
 
 def check_image_size(image_data, min_size=(120, 120)):
     """
@@ -63,6 +66,7 @@ def check_image_size(image_data, min_size=(120, 120)):
         print(f"Image size is too small")
         return False 
     
+
 def store_image(image_data, class_directory, idx, ext):
     """
     Stores image data in a the filepath.
@@ -71,6 +75,7 @@ def store_image(image_data, class_directory, idx, ext):
     with open(file_path, "wb") as f:
         f.write(image_data)
     return file_path
+
 
 def download_images(image_urls, class_directory, number_of_images=None, check_size=(120, 120)):
     """

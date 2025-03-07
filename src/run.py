@@ -1,13 +1,11 @@
-import argparse
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from utils import get_images_urls, download_images, make_image_directory
 from parser import parse_arguments
-import os
 
 if __name__ == '__main__':
     """
-    Main function to execute the Google Image Search Downloader.
+    Main function to execute the Google Image Downloader.
 
     This function parses command-line arguments to determine the search query,
     number of images to download, max number of page to scrape,
@@ -20,10 +18,6 @@ if __name__ == '__main__':
     Example command-line usage:
         python your_script.py "images class" -n 10 --max_number_of_pages 5 --page_range 1 3 --min_image_size 800 600 --output_dir /path/to/output 
     """
-
-    # Determine the parent directory of the script's directory
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    parent_dir = os.path.dirname(script_dir)
 
     # Parse the arguments
     args = parse_arguments()
@@ -46,5 +40,5 @@ if __name__ == '__main__':
     image_urls = get_images_urls(driver, search_query, max_number_of_pages)
 
     # Download images   
-    class_directory = make_image_directory(parent_dir, search_query)
+    class_directory = make_image_directory(output_dir, search_query)
     download_images(image_urls, class_directory, number_of_images=num_images, check_size=min_image_size)

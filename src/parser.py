@@ -1,6 +1,7 @@
 import argparse
 import os
 
+
 def readable_dir(prospective_dir):
     """Check if the provided path is a valid and readable directory."""
     if not os.path.isdir(prospective_dir):
@@ -8,6 +9,7 @@ def readable_dir(prospective_dir):
     if not os.access(prospective_dir, os.R_OK):
         raise argparse.ArgumentTypeError(f"'{prospective_dir}' is not a readable directory.")
     return prospective_dir
+
 
 def parse_arguments():
     """
